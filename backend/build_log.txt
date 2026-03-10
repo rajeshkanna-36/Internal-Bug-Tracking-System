@@ -1,0 +1,117 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------------< com.ibm.sdlc:backend >------------------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ backend ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 16 source files with javac [debug parameters release 17] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/service/CustomUserDetailsService.java:[27,31] cannot find symbol
+  symbol:   method getUsername()
+  location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/service/CustomUserDetailsService.java:[28,31] cannot find symbol
+  symbol:   method getPassword()
+  location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/service/CustomUserDetailsService.java:[29,28] cannot find symbol
+  symbol:   method getRole()
+  location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[42,64] cannot find symbol
+  symbol:   method getUsername()
+  location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[42,87] cannot find symbol
+  symbol:   method getPassword()
+  location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[44,86] cannot find symbol
+  symbol:   method getUsername()
+  location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[47,58] cannot find symbol
+  symbol:   method getUsername()
+  location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[49,83] cannot find symbol
+  symbol:   method getUsername()
+  location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[49,60] cannot find symbol
+  symbol:   method getRole()
+  location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[54,50] cannot find symbol
+  symbol:   method getUsername()
+  location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[59,33] cannot find symbol
+  symbol:   method getUsername()
+  location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[60,56] cannot find symbol
+  symbol:   method getPassword()
+  location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[61,29] cannot find symbol
+  symbol:   method getName()
+  location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[62,29] cannot find symbol
+  symbol:   method getRole()
+  location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[INFO] 14 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.839 s
+[INFO] Finished at: 2026-01-22T13:51:00+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.13.0:compile (default-compile) on project backend: Compilation failure: Compilation failure: 
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/service/CustomUserDetailsService.java:[27,31] cannot find symbol
+[ERROR]   symbol:   method getUsername()
+[ERROR]   location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/service/CustomUserDetailsService.java:[28,31] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/service/CustomUserDetailsService.java:[29,28] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[42,64] cannot find symbol
+[ERROR]   symbol:   method getUsername()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[42,87] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[44,86] cannot find symbol
+[ERROR]   symbol:   method getUsername()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[47,58] cannot find symbol
+[ERROR]   symbol:   method getUsername()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.AuthRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[49,83] cannot find symbol
+[ERROR]   symbol:   method getUsername()
+[ERROR]   location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[49,60] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable user of type com.ibm.sdlc.backend.entity.User
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[54,50] cannot find symbol
+[ERROR]   symbol:   method getUsername()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[59,33] cannot find symbol
+[ERROR]   symbol:   method getUsername()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[60,56] cannot find symbol
+[ERROR]   symbol:   method getPassword()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[61,29] cannot find symbol
+[ERROR]   symbol:   method getName()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] /D:/Projects/Internal Bug Tracking System/backend/src/main/java/com/ibm/sdlc/backend/controller/AuthController.java:[62,29] cannot find symbol
+[ERROR]   symbol:   method getRole()
+[ERROR]   location: variable request of type com.ibm.sdlc.backend.dto.RegisterRequest
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

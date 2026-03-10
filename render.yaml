@@ -1,0 +1,42 @@
+# This file configures a Render Web Service (Spring Boot) and Database (PostgreSQL)
+# to make deploying Project Nexus a one-click process on Render.com
+
+services:
+  - type: web
+    name: project-nexus-api
+    env: java
+    plan: free
+    buildCommand: "./mvnw clean package -DskipTests"
+    startCommand: "java -jar target/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod"
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: project-nexus-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: project-nexus-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: project-nexus-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: "https://your-vercel-app-url.vercel.app" # REPLACE THIS WITH VERCEL URL
+      # Optional: Auto-detect Render's port
+      - key: PORT
+        value: 8080
+    buildFilter:
+      paths:
+        - "backend/**"
+    rootDir: "backend"
+
+databases:
+  - name: project-nexus-db
+    plan: free
+    databaseName: bugtracker
+    user: nexus_admin
