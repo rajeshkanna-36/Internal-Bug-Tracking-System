@@ -9,10 +9,14 @@ services:
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
-      - key: SPRING_DATASOURCE_URL
+      - key: DB_HOST
         fromDatabase:
           name: project-nexus-db
-          property: connectionString
+          property: host
+      - key: DB_NAME
+        fromDatabase:
+          name: project-nexus-db
+          property: database
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: project-nexus-db
