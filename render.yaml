@@ -31,7 +31,8 @@ services:
     buildFilter:
       paths:
         - "backend/**"
-    rootDir: "backend"
+    dockerfilePath: "./backend/Dockerfile"
+    dockerContext: "./backend"
 
 databases:
   - name: project-nexus-db
