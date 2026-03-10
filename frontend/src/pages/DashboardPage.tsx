@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
@@ -54,7 +54,7 @@ export const DashboardPage = () => {
         CLOSED: []
     });
     const [selectedBugId, setSelectedBugId] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [_loading, setLoading] = useState(true);
     const [onlyMyIssues, setOnlyMyIssues] = useState(false);
 
     const fetchBugs = async () => {

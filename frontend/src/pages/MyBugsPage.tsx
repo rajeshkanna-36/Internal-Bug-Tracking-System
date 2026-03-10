@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import { BugDrawer } from '../components/BugDrawer';
 import { useAuth } from '../context/AuthContext';
-import { Bug as BugIcon, ChevronUp, Equal, ChevronDown, Clock, Search, Sparkles } from 'lucide-react';
+import { Bug as BugIcon, ChevronUp, Equal, ChevronDown, Sparkles } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { useOutletContext } from 'react-router-dom';
 
