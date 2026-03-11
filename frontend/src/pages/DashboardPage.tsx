@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { api } from '../utils/api';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import type { DropResult } from '@hello-pangea/dnd';
-import { ChevronUp, Equal, ChevronDown, MoreHorizontal, User, Sparkles } from 'lucide-react';
+import { ChevronUp, Equal, ChevronDown, MoreHorizontal, User, Sparkles, Bug, CheckSquare, BookOpen } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { BugDrawer } from '../components/BugDrawer';
 import { useAuth } from '../context/AuthContext';
@@ -17,6 +17,7 @@ interface MockBug {
     title: string;
     priority: Priority;
     status: Status;
+    issueType?: 'BUG' | 'TASK' | 'STORY' | 'EPIC';
     assigneeName?: string;
     assignee?: { id: number; name: string; username: string };
     reporter?: { id: number; name: string; username: string };
@@ -41,6 +42,16 @@ const PriorityIcon = ({ priority }: { priority: Priority }) => {
     }
 };
 
+const IssueTypeIcon = ({ type }: { type?: string }) => {
+    switch (type) {
+        case 'BUG': return <Bug size={14} className="text-red-400" />;
+        case 'TASK': return <CheckSquare size={14} className="text-blue-400" />;
+        case 'STORY': return <BookOpen size={14} className="text-green-400" />;
+        case 'EPIC': return <BookOpen size={14} className="text-purple-400" />;
+        default: return <Bug size={14} className="text-brand-primary" />;
+    }
+};
+
 export const DashboardPage = () => {
     const { user } = useAuth();
     // Context from Layout.tsx for global search
@@ -56,6 +67,8 @@ export const DashboardPage = () => {
     const [selectedBugId, setSelectedBugId] = useState<string | null>(null);
     const [_loading, setLoading] = useState(true);
     const [onlyMyIssues, setOnlyMyIssues] = useState(false);
+    const [filterPriority, setFilterPriority] = useState<Priority | ''>('');
+    const [filterType, setFilterType] = useState<string>('');
 
     const fetchBugs = async () => {
         try {
@@ -124,11 +137,20 @@ export const DashboardPage = () => {
             // draggableId is in format "BUG-123", we need to extract the number
             const numericId = draggableId.split('-')[1];
             await api.patch(`/api/bugs/${numericId}/status?status=${destCol}`);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to update status on server", error);
+            alert(error.response?.data?.message || error.response?.data || "You are not authorized to make this status transition.");
             // Revert on failure
             fetchBugs();
         }
+    };
+
+    const isDragDisabled = (bug: MockBug) => {
+        if (!user) return true;
+        if (user.role === 'ADMIN') return false;
+        if (user.role === 'DEVELOPER') return bug.status !== 'OPEN';
+        if (user.role === 'TESTER') return bug.status === 'OPEN' || bug.status === 'CLOSED';
+        return false;
     };
 
     // Filter logic
@@ -147,6 +169,16 @@ export const DashboardPage = () => {
                 bug.title.toLowerCase().includes(lowerTerm) ||
                 String(bug.id).toLowerCase().includes(lowerTerm)
             );
+        }
+
+        // 3. Priority Filter
+        if (filterPriority) {
+            list = list.filter(bug => bug.priority === filterPriority);
+        }
+
+        // 4. Issue Type Filter
+        if (filterType) {
+            list = list.filter(bug => bug.issueType === filterType || (!bug.issueType && filterType === 'BUG'));
         }
 
         return list;
@@ -175,17 +207,46 @@ export const DashboardPage = () => {
                     <button
                         onClick={() => setOnlyMyIssues(!onlyMyIssues)}
                         className={cn(
-                            "px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-300 border backdrop-blur-md",
+                            "px-4 py-1.5 rounded-xl text-sm font-medium transition-all duration-300 border backdrop-blur-md",
                             onlyMyIssues
                                 ? "bg-brand-primary/20 text-white border-brand-primary shadow-[0_0_15px_rgba(139,92,246,0.3)]"
-                                : "bg-white/5 text-text-secondary border-white/10 hover:bg-white/10 hover:text-white"
+                                : "bg-bg-surface/50 text-text-secondary border-border-subtle hover:bg-white/10 hover:text-white"
                         )}
                     >
                         My Issues
                     </button>
-                    <button className="px-4 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-sm font-medium transition-all text-text-secondary hover:text-white border border-white/10">
-                        Recently Updated
-                    </button>
+                    
+                    <select 
+                        value={filterType}
+                        onChange={(e) => setFilterType(e.target.value)}
+                        className="px-3 py-1.5 rounded-xl bg-bg-surface/50 border border-border-subtle text-sm text-text-secondary focus:outline-none focus:border-brand-primary cursor-pointer hover:bg-white/10 transition-colors focus:text-white"
+                    >
+                        <option value="">All Types</option>
+                        <option value="BUG">Bug</option>
+                        <option value="TASK">Task</option>
+                        <option value="STORY">Story</option>
+                        <option value="EPIC">Epic</option>
+                    </select>
+                    
+                    <select 
+                        value={filterPriority}
+                        onChange={(e) => setFilterPriority(e.target.value as Priority)}
+                        className="px-3 py-1.5 rounded-xl bg-bg-surface/50 border border-border-subtle text-sm text-text-secondary focus:outline-none focus:border-brand-primary cursor-pointer hover:bg-white/10 transition-colors focus:text-white"
+                    >
+                        <option value="">All Priorities</option>
+                        <option value="HIGH">High</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="LOW">Low</option>
+                    </select>
+
+                    {(filterType || filterPriority || onlyMyIssues) && (
+                        <button 
+                            onClick={() => { setFilterType(''); setFilterPriority(''); setOnlyMyIssues(false); }}
+                            className="text-xs text-text-muted hover:text-white transition-colors ml-2 font-medium"
+                        >
+                            Clear filters
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -232,14 +293,15 @@ export const DashboardPage = () => {
                                                 )}
                                             >
                                                 {filteredBugs.map((bug, index) => (
-                                                    <Draggable key={bug.id} draggableId={String(bug.id)} index={index}>
+                                                    <Draggable key={bug.id} draggableId={String(bug.id)} index={index} isDragDisabled={isDragDisabled(bug)}>
                                                         {(provided: any, snapshot: any) => (
                                                             <div
                                                                 ref={provided.innerRef}
                                                                 {...provided.draggableProps}
                                                                 {...provided.dragHandleProps}
                                                                 className={cn(
-                                                                    "glass-card p-4 rounded-xl cursor-grab active:cursor-grabbing group relative overflow-hidden",
+                                                                    "glass-card p-4 rounded-xl relative overflow-hidden group",
+                                                                    isDragDisabled(bug) ? "cursor-not-allowed opacity-90" : "cursor-grab active:cursor-grabbing",
                                                                     snapshot.isDragging && "shadow-[0_10px_25px_rgba(0,0,0,0.5)] rotate-3 scale-105 border-brand-primary"
                                                                 )}
                                                                 onClick={() => {
@@ -256,8 +318,9 @@ export const DashboardPage = () => {
 
                                                                 <div className="flex items-center justify-between mt-auto">
                                                                     <div className="flex items-center gap-2">
-                                                                        <div className="text-[11px] font-mono text-text-muted bg-bg-base/50 px-2 py-1 rounded-md border border-white/5">
-                                                                            {String(bug.id)}
+                                                                        <div className="text-[11px] font-mono text-text-muted bg-bg-base/50 px-2 py-1 rounded-md border border-white/5 flex items-center gap-1.5" title={`Issue Type: ${bug.issueType || 'BUG'}`}>
+                                                                            <IssueTypeIcon type={bug.issueType} />
+                                                                            {String(bug.id).replace('BUG-', 'ISS-')}
                                                                         </div>
                                                                         <div className="bg-bg-base/50 p-1 rounded-md border border-white/5" title={`Priority: ${bug.priority}`}>
                                                                             <PriorityIcon priority={bug.priority} />

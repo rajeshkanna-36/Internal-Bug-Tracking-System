@@ -50,14 +50,16 @@ export const Layout = () => {
                         <Link to="/dashboard" className={cn("px-4 py-2 rounded-lg transition-all", location.pathname === '/dashboard' ? "bg-white/10 text-white" : "text-text-secondary hover:text-white hover:bg-white/5")}>Dashboards</Link>
                         <Link to="/bugs" className={cn("px-4 py-2 rounded-lg transition-all", location.pathname === '/bugs' ? "bg-white/10 text-white" : "text-text-secondary hover:text-white hover:bg-white/5")}>Your Work</Link>
 
-                        <Button
-                            variant="primary"
-                            size="sm"
-                            className="ml-4 gap-2 px-4 shadow-[0_0_10px_rgba(139,92,246,0.4)] hover:shadow-[0_0_15px_rgba(139,92,246,0.6)]"
-                            onClick={() => setIsCreateModalOpen(true)}
-                        >
-                            <Plus size={16} /> Create Issue
-                        </Button>
+                        {user?.role !== 'DEVELOPER' && (
+                            <Button
+                                variant="primary"
+                                size="sm"
+                                className="ml-4 gap-2 px-4 shadow-[0_0_10px_rgba(139,92,246,0.4)] hover:shadow-[0_0_15px_rgba(139,92,246,0.6)]"
+                                onClick={() => setIsCreateModalOpen(true)}
+                            >
+                                <Plus size={16} /> Create Issue
+                            </Button>
+                        )}
                     </nav>
                 </div>
 

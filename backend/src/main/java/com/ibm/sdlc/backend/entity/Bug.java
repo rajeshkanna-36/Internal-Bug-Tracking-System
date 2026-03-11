@@ -25,6 +25,9 @@ public class Bug {
     private Priority priority;
 
     @Enumerated(EnumType.STRING)
+    private IssueType issueType = IssueType.BUG;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @ManyToOne

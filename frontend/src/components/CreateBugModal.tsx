@@ -26,6 +26,7 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
     const [description, setDescription] = useState('');
     const [stepsToReproduce, setStepsToReproduce] = useState('');
     const [priority, setPriority] = useState('MEDIUM');
+    const [issueType, setIssueType] = useState('BUG');
     const [assigneeId, setAssigneeId] = useState('');
 
     // Fetch users for assignee dropdown when modal opens
@@ -55,14 +56,15 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
                 description,
                 stepsToReproduce,
                 priority,
+                issueType,
                 ...(assigneeId ? { assigneeId: parseInt(assigneeId) } : {})
             });
 
-            // Reset form
             setTitle('');
             setDescription('');
             setStepsToReproduce('');
             setPriority('MEDIUM');
+            setIssueType('BUG');
             setAssigneeId('');
 
             if (onCreated) onCreated();
@@ -120,7 +122,21 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-xs font-semibold text-text-muted uppercase tracking-wider">Type</label>
+                            <select
+                                className="w-full bg-bg-surface/50 border border-border-subtle rounded-xl px-4 py-3 text-sm text-white outline-none transition-all focus:border-brand-primary focus:ring-1 focus:ring-brand-primary hover:border-white/20 appearance-none cursor-pointer"
+                                value={issueType}
+                                onChange={(e) => setIssueType(e.target.value)}
+                            >
+                                <option value="BUG">Bug</option>
+                                <option value="TASK">Task</option>
+                                <option value="STORY">Story</option>
+                                <option value="EPIC">Epic</option>
+                            </select>
+                        </div>
+
                         <div className="flex flex-col gap-1.5 w-full">
                             <label className="text-xs font-semibold text-text-muted uppercase tracking-wider">Priority</label>
                             <select

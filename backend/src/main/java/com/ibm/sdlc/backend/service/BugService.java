@@ -14,10 +14,12 @@ public class BugService {
 
     private final BugRepository bugRepository;
     private final UserRepository userRepository;
+    private final com.ibm.sdlc.backend.repository.CommentRepository commentRepository;
 
-    public BugService(BugRepository bugRepository, UserRepository userRepository) {
+    public BugService(BugRepository bugRepository, UserRepository userRepository, com.ibm.sdlc.backend.repository.CommentRepository commentRepository) {
         this.bugRepository = bugRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     public Bug createBug(BugRequest request, String reporterUsername) {
@@ -29,6 +31,7 @@ public class BugService {
         bug.setDescription(request.getDescription());
         bug.setStepsToReproduce(request.getStepsToReproduce());
         bug.setPriority(request.getPriority());
+        bug.setIssueType(request.getIssueType() != null ? request.getIssueType() : IssueType.BUG);
         bug.setStatus(Status.OPEN);
         bug.setReporter(reporter);
 
@@ -53,9 +56,26 @@ public class BugService {
     }
 
     public Bug updateStatus(Long bugId, Status status, String username) {
-        // In a real app, verify permissions here (e.g., proper state transitions)
         Bug bug = bugRepository.findById(bugId)
                 .orElseThrow(() -> new RuntimeException("Bug not found"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (user.getRole() == Role.DEVELOPER) {
+            if (bug.getStatus() == Status.OPEN && status == Status.IN_REVIEW) {
+                // allowed
+            } else {
+                throw new RuntimeException("Developers can only transition issues from OPEN to IN_REVIEW.");
+            }
+        } else if (user.getRole() == Role.TESTER) {
+            if (bug.getStatus() == Status.IN_REVIEW && status == Status.TESTING) {
+                // allowed
+            } else if (bug.getStatus() == Status.TESTING && status == Status.CLOSED) {
+                // allowed
+            } else {
+                throw new RuntimeException("Testers can only transition issues from IN_REVIEW to TESTING, or TESTING to CLOSED.");
+            }
+        }
 
         bug.setStatus(status);
         return bugRepository.save(bug);
@@ -64,5 +84,28 @@ public class BugService {
     public Bug getBugById(Long bugId) {
         return bugRepository.findById(bugId)
                 .orElseThrow(() -> new RuntimeException("Bug not found"));
+    }
+
+    public Comment addComment(Long bugId, String text, String username) {
+        Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new RuntimeException("Bug not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        
+        Comment comment = new Comment();
+        comment.setBug(bug);
+        comment.setUser(user);
+        comment.setText(text);
+        
+        return commentRepository.save(comment);
+    }
+
+    public List<Comment> getComments(Long bugId) {
+        return commentRepository.findByBugIdOrderByCreatedAtDesc(bugId);
+    }
+
+    public void deleteBug(Long bugId) {
+        if (!bugRepository.existsById(bugId)) {
+            throw new RuntimeException("Bug not found");
+        }
+        bugRepository.deleteById(bugId);
     }
 }
