@@ -15,20 +15,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     children,
     ...props
 }, ref) => {
-    const baseStyles = "inline-flex items-center justify-center rounded-[3px] font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-jira-blue/50 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed";
+    const baseStyles = "inline-flex items-center justify-center rounded-xl font-medium transition-all focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
-        primary: "bg-jira-blue text-white hover:bg-jira-blue-hover active:bg-[#0047b3]",
-        secondary: "bg-[#091e420f] text-jira-gray-text hover:bg-[#091e4224] active:bg-[#091e424f]",
-        danger: "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
-        ghost: "text-jira-gray-subtext hover:bg-[#091e420f] hover:text-jira-gray-text active:bg-[#091e4224]",
-        outline: "border-2 border-[#dfe1e6] bg-transparent hover:bg-[#091e420f] text-jira-gray-text"
+        primary: "bg-gradient-to-r from-brand-primary to-brand-secondary text-white hover:from-brand-primary hover:to-brand-primary shadow-[0_0_10px_rgba(139,92,246,0.3)] hover:shadow-[0_0_15px_rgba(139,92,246,0.5)]",
+        secondary: "bg-white/10 text-white hover:bg-white/20 border border-white/10",
+        danger: "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/20",
+        ghost: "text-text-secondary hover:bg-white/10 hover:text-white",
+        outline: "border border-white/20 bg-transparent hover:bg-white/10 text-text-secondary hover:text-white"
     };
 
     const sizes = {
-        sm: "px-2.5 py-1 text-sm h-8",
-        md: "px-3 py-1.5 text-sm h-9",
-        lg: "px-4 py-2 text-base h-10"
+        sm: "px-3 py-1.5 text-sm h-8 gap-1.5",
+        md: "px-4 py-2 text-sm h-9 gap-2",
+        lg: "px-5 py-2.5 text-base h-10 gap-2"
     };
 
     return (

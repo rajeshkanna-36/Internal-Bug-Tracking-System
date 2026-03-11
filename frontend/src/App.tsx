@@ -4,6 +4,16 @@ import { SignupPage } from './pages/SignupPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { MyBugsPage } from './pages/MyBugsPage';
 import { Layout } from './components/Layout';
+import { useAuth } from './context/AuthContext';
+
+// Protected route wrapper — redirects to /login if not authenticated
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+};
 
 function App() {
   return (
@@ -11,12 +21,17 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
 
-      <Route element={<Layout />}>
+      <Route element={
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      }>
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/bugs" element={<MyBugsPage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );
 }

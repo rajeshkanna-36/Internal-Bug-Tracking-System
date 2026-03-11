@@ -9,7 +9,7 @@ export const SignupPage = () => {
     const [name, setName] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [role] = useState('DEVELOPER'); // Default role
+    const [role, setRole] = useState('DEVELOPER');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -26,24 +26,26 @@ export const SignupPage = () => {
 
         setLoading(true);
         try {
-            // Call Spring Boot backend Register API
-            await api.post('/api/auth/register', {
-                name,
-                username,
-                password,
-                role
-            });
+            // Register
+            await api.post('/api/auth/register', { name, username, password, role });
 
-            // If the backend returns the user object, we can optionally auto-login by calling the login endpoint
-            // Let's call login immediately so the user doesn't have to enter their credentials again
+            // Auto-login after successful registration
             const loginResponse = await api.post('/api/auth/login', { username, password });
-            const { token, role: loggedInRole, username: loggedInUser } = loginResponse.data;
+            const { token, role: loggedInRole, username: loggedInUser, id, name: loggedInName } = loginResponse.data;
 
-            login(token, { username: loggedInUser, role: loggedInRole });
+            login(token, { id, username: loggedInUser, name: loggedInName, role: loggedInRole });
             navigate('/dashboard');
 
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to register account. Username may be taken.');
+            // Handle both JSON {message: ...} and plain string error responses
+            const data = err.response?.data;
+            if (typeof data === 'string') {
+                setError(data);
+            } else if (data?.message) {
+                setError(data.message);
+            } else {
+                setError('Failed to register account. Username may be taken.');
+            }
         } finally {
             setLoading(false);
         }
@@ -124,6 +126,20 @@ export const SignupPage = () => {
                                     className="w-full bg-bg-surface/50 border border-border-subtle rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-text-muted outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-sm"
                                     required
                                 />
+                            </div>
+
+                            {/* Role selector */}
+                            <div className="relative">
+                                <label className="text-xs font-semibold text-text-muted uppercase tracking-wider mb-1.5 block">Role</label>
+                                <select
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    className="w-full bg-bg-surface/50 border border-border-subtle rounded-xl px-4 py-3.5 text-white outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all text-sm appearance-none cursor-pointer"
+                                >
+                                    <option value="DEVELOPER">Developer</option>
+                                    <option value="TESTER">Tester</option>
+                                    <option value="ADMIN">Admin</option>
+                                </select>
                             </div>
                         </div>
 

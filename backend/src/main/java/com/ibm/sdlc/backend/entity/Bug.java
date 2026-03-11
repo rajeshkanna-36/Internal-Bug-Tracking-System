@@ -1,5 +1,6 @@
 package com.ibm.sdlc.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -28,9 +29,11 @@ public class Bug {
 
     @ManyToOne
     @JoinColumn(name = "reporter_id", nullable = false)
+    @JsonIgnoreProperties({ "password", "hibernateLazyInitializer", "handler" })
     private User reporter;
 
     @ManyToOne
     @JoinColumn(name = "assignee_id")
+    @JsonIgnoreProperties({ "password", "hibernateLazyInitializer", "handler" })
     private User assignee;
 }

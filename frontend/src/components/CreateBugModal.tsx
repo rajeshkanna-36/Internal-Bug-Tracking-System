@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import { Input } from './Input';
 import { Button } from './Button';
@@ -7,12 +7,19 @@ import { api } from '../utils/api';
 interface CreateBugModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onCreated?: () => void; // Optional callback to refresh dashboard
+    onCreated?: () => void;
+}
+
+interface UserOption {
+    id: number;
+    username: string;
+    name: string;
 }
 
 export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose, onCreated }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [users, setUsers] = useState<UserOption[]>([]);
 
     // Form fields mapped to backend DTO
     const [title, setTitle] = useState('');
@@ -20,6 +27,22 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
     const [stepsToReproduce, setStepsToReproduce] = useState('');
     const [priority, setPriority] = useState('MEDIUM');
     const [assigneeId, setAssigneeId] = useState('');
+
+    // Fetch users for assignee dropdown when modal opens
+    useEffect(() => {
+        if (isOpen) {
+            fetchUsers();
+        }
+    }, [isOpen]);
+
+    const fetchUsers = async () => {
+        try {
+            const response = await api.get('/api/users');
+            setUsers(response.data);
+        } catch (err) {
+            console.error("Failed to fetch users", err);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -32,7 +55,6 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
                 description,
                 stepsToReproduce,
                 priority,
-                // Only send assigneeId if one is selected
                 ...(assigneeId ? { assigneeId: parseInt(assigneeId) } : {})
             });
 
@@ -46,7 +68,14 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
             if (onCreated) onCreated();
             onClose();
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to create issue.');
+            const data = err.response?.data;
+            if (typeof data === 'string') {
+                setError(data);
+            } else if (data?.message) {
+                setError(data.message);
+            } else {
+                setError('Failed to create issue.');
+            }
         } finally {
             setLoading(false);
         }
@@ -56,7 +85,7 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
         <Modal isOpen={isOpen} onClose={onClose} title="Create issue">
             <form onSubmit={handleSubmit} className="space-y-5">
                 {error && (
-                    <div className="text-[#bf2600] text-sm bg-[#ffebe6] p-2 rounded-[3px]">
+                    <div className="bg-red-500/10 border border-red-500/30 text-red-400 p-3 rounded-xl text-sm">
                         {error}
                     </div>
                 )}
@@ -71,31 +100,31 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
                         required
                     />
 
-                    <div className="flex flex-col gap-1 w-full">
-                        <label className="text-sm font-semibold text-jira-gray-subtext">Description</label>
+                    <div className="flex flex-col gap-1.5 w-full">
+                        <label className="text-xs font-semibold text-text-muted uppercase tracking-wider">Description</label>
                         <textarea
-                            className="w-full bg-[#fafbfc] border border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-jira-blue focus:ring-2 focus:ring-jira-blue focus:ring-opacity-20 rounded-[3px] px-3 py-2 text-sm text-jira-gray-text placeholder:text-[#8993a4] outline-none transition-colors min-h-[120px] resize-y"
+                            className="w-full bg-bg-surface/50 border border-border-subtle rounded-xl px-4 py-3 text-sm text-white placeholder:text-text-muted outline-none transition-all focus:border-brand-primary focus:ring-1 focus:ring-brand-primary hover:border-white/20 min-h-[120px] resize-y"
                             placeholder="Add details about the issue..."
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
                     </div>
 
-                    <div className="flex flex-col gap-1 w-full">
-                        <label className="text-sm font-semibold text-jira-gray-subtext">Steps to Reproduce</label>
+                    <div className="flex flex-col gap-1.5 w-full">
+                        <label className="text-xs font-semibold text-text-muted uppercase tracking-wider">Steps to Reproduce</label>
                         <textarea
-                            className="w-full bg-[#fafbfc] border border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-jira-blue focus:ring-2 focus:ring-jira-blue focus:ring-opacity-20 rounded-[3px] px-3 py-2 text-sm text-jira-gray-text placeholder:text-[#8993a4] outline-none transition-colors min-h-[80px] resize-y"
-                            placeholder="1. Go to...\n2. Click on...\n3. Observe..."
+                            className="w-full bg-bg-surface/50 border border-border-subtle rounded-xl px-4 py-3 text-sm text-white placeholder:text-text-muted outline-none transition-all focus:border-brand-primary focus:ring-1 focus:ring-brand-primary hover:border-white/20 min-h-[80px] resize-y"
+                            placeholder={"1. Go to...\n2. Click on...\n3. Observe..."}
                             value={stepsToReproduce}
                             onChange={(e) => setStepsToReproduce(e.target.value)}
                         />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1 w-full">
-                            <label className="text-sm font-semibold text-jira-gray-subtext">Priority</label>
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-xs font-semibold text-text-muted uppercase tracking-wider">Priority</label>
                             <select
-                                className="w-full bg-[#fafbfc] border border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-jira-blue focus:ring-2 focus:ring-jira-blue focus:ring-opacity-20 rounded-[3px] px-3 py-2 text-sm text-jira-gray-text outline-none transition-colors appearance-none"
+                                className="w-full bg-bg-surface/50 border border-border-subtle rounded-xl px-4 py-3 text-sm text-white outline-none transition-all focus:border-brand-primary focus:ring-1 focus:ring-brand-primary hover:border-white/20 appearance-none cursor-pointer"
                                 value={priority}
                                 onChange={(e) => setPriority(e.target.value)}
                             >
@@ -105,21 +134,25 @@ export const CreateBugModal: React.FC<CreateBugModalProps> = ({ isOpen, onClose,
                             </select>
                         </div>
 
-                        <div className="flex flex-col gap-1 w-full">
-                            <label className="text-sm font-semibold text-jira-gray-subtext">Assignee</label>
+                        <div className="flex flex-col gap-1.5 w-full">
+                            <label className="text-xs font-semibold text-text-muted uppercase tracking-wider">Assignee</label>
                             <select
-                                className="w-full bg-[#fafbfc] border border-[#dfe1e6] hover:bg-[#ebecf0] focus:bg-white focus:border-jira-blue focus:ring-2 focus:ring-jira-blue focus:ring-opacity-20 rounded-[3px] px-3 py-2 text-sm text-jira-gray-text outline-none transition-colors appearance-none"
+                                className="w-full bg-bg-surface/50 border border-border-subtle rounded-xl px-4 py-3 text-sm text-white outline-none transition-all focus:border-brand-primary focus:ring-1 focus:ring-brand-primary hover:border-white/20 appearance-none cursor-pointer"
                                 value={assigneeId}
                                 onChange={(e) => setAssigneeId(e.target.value)}
                             >
                                 <option value="">Unassigned</option>
-                                <option value="1">Rajesh Kanna</option>
+                                {users.map((u) => (
+                                    <option key={u.id} value={u.id}>
+                                        {u.name} ({u.username})
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center justify-end gap-2 pt-4 border-t border-[#dfe1e6] mt-6">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10 mt-6">
                     <Button type="button" variant="ghost" onClick={onClose}>
                         Cancel
                     </Button>

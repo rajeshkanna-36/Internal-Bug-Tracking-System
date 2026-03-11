@@ -13,17 +13,17 @@ export const Badge: React.FC<BadgeProps> = ({
     ...props
 }) => {
     const variants = {
-        default: "bg-[#dfe1e6] text-[#42526e]", // OPEN / TO DO
-        success: "bg-jira-green-bg text-jira-green-text", // CLOSED / DONE
-        warning: "bg-jira-yellow-bg text-jira-yellow-text", // IN PROGRESS
-        danger: "bg-jira-red-bg text-jira-red-text", // HIGH PRIORITY
-        info: "bg-jira-blue-light text-jira-blue-text" // IN REVIEW / TESTING
+        default: "bg-status-todo/20 text-status-todo border border-status-todo/30",
+        success: "bg-status-done/20 text-status-done border border-status-done/30",
+        warning: "bg-status-testing/20 text-status-testing border border-status-testing/30",
+        danger: "bg-priority-high/20 text-priority-high border border-priority-high/30",
+        info: "bg-status-in-review/20 text-status-in-review border border-status-in-review/30"
     };
 
     return (
         <span
             className={cn(
-                "inline-flex items-center px-2 py-0.5 rounded-[3px] text-xs font-bold uppercase tracking-wide",
+                "inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider",
                 variants[variant],
                 className
             )}

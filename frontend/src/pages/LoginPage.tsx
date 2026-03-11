@@ -24,13 +24,10 @@ export const LoginPage = () => {
 
         setLoading(true);
         try {
-            // Call Spring Boot backend Auth API
             const response = await api.post('/api/auth/login', { username, password });
+            const { token, role, username: loggedInUser, id, name } = response.data;
 
-            // Assuming backend AuthResponse structure: { token: '', role: '', username: '' }
-            const { token, role, username: loggedInUser } = response.data;
-
-            login(token, { username: loggedInUser, role });
+            login(token, { id, username: loggedInUser, name, role });
             navigate('/dashboard');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Invalid username or password.');
