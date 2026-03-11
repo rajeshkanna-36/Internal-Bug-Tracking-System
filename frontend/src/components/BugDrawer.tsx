@@ -169,7 +169,7 @@ export const BugDrawer: React.FC<BugDrawerProps> = ({ isOpen, onClose, bugId }) 
                                 <div className="col-span-2 space-y-8">
                                     <div>
                                         <h3 className="text-sm font-semibold text-text-secondary mb-3 uppercase tracking-wider">Description</h3>
-                                        <div className="text-sm text-text-secondary bg-white/5 border border-white/10 p-5 rounded-xl min-h-[120px] whitespace-pre-line leading-relaxed hover:bg-white/10 transition-colors cursor-text prose prose-invert prose-sm max-w-none">
+                                        <div className="text-sm text-text-secondary bg-white/5 border border-white/10 p-5 rounded-xl min-h-[120px] leading-relaxed hover:bg-white/10 transition-colors cursor-text prose prose-invert prose-sm max-w-none">
                                             {bug.description ? (
                                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{bug.description}</ReactMarkdown>
                                             ) : (
@@ -181,7 +181,7 @@ export const BugDrawer: React.FC<BugDrawerProps> = ({ isOpen, onClose, bugId }) 
                                     {bug.stepsToReproduce && (
                                         <div>
                                             <h3 className="text-sm font-semibold text-text-secondary mb-3 uppercase tracking-wider">Steps to Reproduce</h3>
-                                            <div className="text-sm text-text-secondary bg-white/5 border border-white/10 p-5 rounded-xl min-h-[100px] whitespace-pre-line leading-relaxed prose prose-invert prose-sm max-w-none">
+                                            <div className="text-sm text-text-secondary bg-white/5 border border-white/10 p-5 rounded-xl min-h-[100px] leading-relaxed prose prose-invert prose-sm max-w-none">
                                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{bug.stepsToReproduce}</ReactMarkdown>
                                             </div>
                                         </div>
@@ -229,7 +229,7 @@ export const BugDrawer: React.FC<BugDrawerProps> = ({ isOpen, onClose, bugId }) 
                                                                 <span className="text-sm font-semibold text-white">{comment.user?.name || comment.user?.username}</span>
                                                                 <span className="text-[11px] text-text-muted font-medium">{new Date(comment.createdAt).toLocaleString()}</span>
                                                             </div>
-                                                            <div className="text-sm text-text-secondary whitespace-pre-line leading-relaxed bg-white/5 border border-white/10 p-3.5 rounded-xl rounded-tl-none group-hover:border-white/20 transition-colors prose prose-invert prose-sm max-w-none">
+                                                            <div className="text-sm text-text-secondary leading-relaxed bg-white/5 border border-white/10 p-3.5 rounded-xl rounded-tl-none group-hover:border-white/20 transition-colors prose prose-invert prose-sm max-w-none">
                                                                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{comment.text}</ReactMarkdown>
                                                             </div>
                                                         </div>
