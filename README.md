@@ -9,7 +9,7 @@ I built this project to gain hands-on experience with modern web development, sp
 *   **Kanban Board Dashboard**: A visual drag-and-drop board to track the status of different bugs (e.g., Open, In Progress, Review, Closed).
 *   **User Roles & Permissions**: The system supports different roles (Admin, Developer, Tester), ensuring that users only have access to the features (like creating or deleting bugs) they need.
 *   **Detailed Bug Reports**: Users can create detailed bug tickets with rich text descriptions, priority levels, and issue types.
-*   **Comments & Collaboration**: Team members can leave comments on specific bug tickets to communicate effectively.
+*   **Comments & Collaboration**: Team members can  leave comments on specific bug tickets to communicate effectively.
 *   **Secure Authentication**: Users log in using secure JSON Web Tokens (JWT) to ensure data privacy.
 
 ## Tech Stack
