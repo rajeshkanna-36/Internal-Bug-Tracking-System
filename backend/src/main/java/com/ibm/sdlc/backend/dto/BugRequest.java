@@ -12,4 +12,6 @@ public class BugRequest {
     private Priority priority;
     private IssueType issueType;
     private Long assigneeId;
+    private Long projectId;
+    private Long parentBugId;
 }

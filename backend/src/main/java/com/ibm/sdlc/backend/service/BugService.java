@@ -15,11 +15,18 @@ public class BugService {
     private final BugRepository bugRepository;
     private final UserRepository userRepository;
     private final com.ibm.sdlc.backend.repository.CommentRepository commentRepository;
+    private final com.ibm.sdlc.backend.repository.ProjectRepository projectRepository;
+    private final com.ibm.sdlc.backend.repository.NotificationRepository notificationRepository;
 
-    public BugService(BugRepository bugRepository, UserRepository userRepository, com.ibm.sdlc.backend.repository.CommentRepository commentRepository) {
+    public BugService(BugRepository bugRepository, UserRepository userRepository, 
+                      com.ibm.sdlc.backend.repository.CommentRepository commentRepository, 
+                      com.ibm.sdlc.backend.repository.ProjectRepository projectRepository,
+                      com.ibm.sdlc.backend.repository.NotificationRepository notificationRepository) {
         this.bugRepository = bugRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.projectRepository = projectRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public Bug createBug(BugRequest request, String reporterUsername) {
@@ -41,7 +48,29 @@ public class BugService {
             bug.setAssignee(assignee);
         }
 
-        return bugRepository.save(bug);
+        if (request.getProjectId() != null) {
+            Project project = projectRepository.findById(request.getProjectId())
+                    .orElseThrow(() -> new RuntimeException("Project not found"));
+            bug.setProject(project);
+        }
+
+        if (request.getParentBugId() != null) {
+            Bug parentBug = bugRepository.findById(request.getParentBugId())
+                    .orElseThrow(() -> new RuntimeException("Parent bug not found"));
+            bug.setParentBug(parentBug);
+        }
+
+        Bug savedBug = bugRepository.save(bug);
+
+        if (savedBug.getAssignee() != null && !savedBug.getAssignee().getId().equals(reporter.getId())) {
+            Notification notif = new Notification();
+            notif.setUser(savedBug.getAssignee());
+            notif.setBug(savedBug);
+            notif.setMessage(reporter.getUsername() + " assigned you to an issue: " + savedBug.getTitle());
+            notificationRepository.save(notif);
+        }
+
+        return savedBug;
     }
 
     public List<Bug> getBugsForUser(String username) {
@@ -77,6 +106,15 @@ public class BugService {
             }
         }
 
+        if (bug.getStatus() != status) {
+            Comment systemLog = new Comment();
+            systemLog.setBug(bug);
+            systemLog.setUser(user);
+            systemLog.setText("changed status from " + bug.getStatus() + " to " + status);
+            systemLog.setSystem(true);
+            commentRepository.save(systemLog);
+        }
+
         bug.setStatus(status);
         return bugRepository.save(bug);
     }
@@ -94,8 +132,30 @@ public class BugService {
         comment.setBug(bug);
         comment.setUser(user);
         comment.setText(text);
+        comment.setSystem(false);
         
-        return commentRepository.save(comment);
+        Comment savedComment = commentRepository.save(comment);
+
+        // Notify Assignee
+        if (bug.getAssignee() != null && !bug.getAssignee().getId().equals(user.getId())) {
+            Notification notif = new Notification();
+            notif.setUser(bug.getAssignee());
+            notif.setBug(bug);
+            notif.setMessage(user.getUsername() + " commented on an issue assigned to you.");
+            notificationRepository.save(notif);
+        }
+
+        // Notify Reporter (if different from assignee and commenter)
+        if (bug.getReporter() != null && !bug.getReporter().getId().equals(user.getId()) 
+            && (bug.getAssignee() == null || !bug.getReporter().getId().equals(bug.getAssignee().getId()))) {
+            Notification notif2 = new Notification();
+            notif2.setUser(bug.getReporter());
+            notif2.setBug(bug);
+            notif2.setMessage(user.getUsername() + " commented on an issue you reported.");
+            notificationRepository.save(notif2);
+        }
+        
+        return savedComment;
     }
 
     public List<Comment> getComments(Long bugId) {

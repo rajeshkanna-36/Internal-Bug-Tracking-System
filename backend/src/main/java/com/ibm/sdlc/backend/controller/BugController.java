@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.cache.annotation.CacheEvict;
 import java.util.List;
 
 @RestController
@@ -25,6 +26,7 @@ public class BugController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('TESTER')")
+    @CacheEvict(value = "analyticsSummary", allEntries = true)
     public ResponseEntity<Bug> createBug(@RequestBody BugRequest request, Authentication authentication) {
         return ResponseEntity.ok(bugService.createBug(request, authentication.getName()));
     }
@@ -35,6 +37,7 @@ public class BugController {
     }
 
     @PatchMapping("/{id}/status")
+    @CacheEvict(value = "analyticsSummary", allEntries = true)
     public ResponseEntity<Bug> updateStatus(@PathVariable Long id, @RequestParam Status status,
             Authentication authentication) {
         return ResponseEntity.ok(bugService.updateStatus(id, status, authentication.getName()));
@@ -57,6 +60,7 @@ public class BugController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @CacheEvict(value = "analyticsSummary", allEntries = true)
     public ResponseEntity<Void> deleteBug(@PathVariable Long id) {
         bugService.deleteBug(id);
         return ResponseEntity.noContent().build();

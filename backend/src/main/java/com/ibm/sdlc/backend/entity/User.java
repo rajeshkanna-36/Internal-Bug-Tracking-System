@@ -25,4 +25,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column(length = 500)
+    private String avatarUrl;
+
+    @Column(length = 100)
+    private String department;
+
+    @Column(length = 100)
+    private String jobTitle;
+
+    @Column(columnDefinition = "TEXT")
+    private String bio;
 }

@@ -23,4 +23,25 @@ public class UserController {
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
+
+    @GetMapping("/profile")
+    public ResponseEntity<User> getProfile(java.security.Principal principal) {
+        return userRepository.findByUsername(principal.getName())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @org.springframework.web.bind.annotation.PutMapping("/profile")
+    public ResponseEntity<User> updateProfile(java.security.Principal principal, @org.springframework.web.bind.annotation.RequestBody com.ibm.sdlc.backend.dto.UserProfileRequest request) {
+        return userRepository.findByUsername(principal.getName())
+                .map(user -> {
+                    if (request.getName() != null) user.setName(request.getName());
+                    user.setAvatarUrl(request.getAvatarUrl());
+                    user.setDepartment(request.getDepartment());
+                    user.setJobTitle(request.getJobTitle());
+                    user.setBio(request.getBio());
+                    return ResponseEntity.ok(userRepository.save(user));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

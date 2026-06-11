@@ -19,6 +19,9 @@ public class Comment {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Column(nullable = false)
+    private boolean isSystem = false;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bug_id", nullable = false)
     @JsonIgnoreProperties({"comments", "reporter", "assignee", "hibernateLazyInitializer", "handler"})
